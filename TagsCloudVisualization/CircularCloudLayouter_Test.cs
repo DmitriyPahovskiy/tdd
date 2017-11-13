@@ -55,14 +55,10 @@ namespace TagsCloudVisualization
             var tags = new List<Rectangle>();
             var target = new CircularCloudLayouter(cloudCentre);
 
-            tags.Add(target.PutNextRectangle(new Size(40, 20)));
-            tags.Add(target.PutNextRectangle(new Size(40, 20)));
-            tags.Add(target.PutNextRectangle(new Size(40, 20)));
-            tags.Add(target.PutNextRectangle(new Size(40, 20)));
-            tags.Add(target.PutNextRectangle(new Size(40, 20)));
-            tags.Add(target.PutNextRectangle(new Size(40, 20)));
-            tags.Add(target.PutNextRectangle(new Size(40, 20)));
-            tags.Add(target.PutNextRectangle(new Size(40, 20)));
+            var random = new Random();
+            
+            for(int i = 0;i<10;i++)
+                tags.Add(target.PutNextRectangle(new Size(random.Next(20,40), random.Next(10,20))));
 
             DrawAndSaveCloud(tags);
             

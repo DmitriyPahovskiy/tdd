@@ -22,20 +22,39 @@ namespace TagsCloudVisualization
 
         public Rectangle PutNextRectangle(Size rectangleSize)
         {
-            var rectangle = new Rectangle(new Point(center.X - rectangleSize.Width/2, center.Y - rectangleSize.Height/2), rectangleSize);
+            var rectangle = CreateRectangleAtCenter(rectangleSize);
 
+            MoveToNextPosition(ref rectangle);
+
+            CompactToCenter(ref rectangle);
+
+            tags.Add(rectangle);
+            
+            return rectangle;
+        }
+
+        private Rectangle CreateRectangleAtCenter(Size rectangleSize)
+        {
+            return new Rectangle(new Point(center.X - rectangleSize.Width / 2, center.Y - rectangleSize.Height / 2), rectangleSize);
+        }
+
+        private void MoveToNextPosition(ref Rectangle rectangle)
+        {
+            Rectangle copyRectangle;
             do
             {
                 int dx, dy;
                 positioner.NextPosition(out dx, out dy);
                 rectangle.X += dx;
                 rectangle.Y += dy;
+                copyRectangle = rectangle;
             }
-            while (tags.Any(t => t.IntersectsWith(rectangle)));
+            while (tags.Any(t => t.IntersectsWith(copyRectangle)));
+        }
 
-            tags.Add(rectangle);
-            
-            return rectangle;
+        private void CompactToCenter(ref Rectangle rectangle)
+        {
+            // TODO: implement
         }
     }
 }
