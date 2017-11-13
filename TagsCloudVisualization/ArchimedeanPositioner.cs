@@ -8,15 +8,24 @@ namespace TagsCloudVisualization
 {
     public class ArchimedeanPositioner : IPositioner
     {
-        private int factor = 0;
+        private readonly double factorDelta = 1;
+        private readonly double spiralPower = 0.5;
+
+        private double factor = 0;
         private int angle = 0;
+
+        public ArchimedeanPositioner(double factorDelta, double spiralPower)
+        {
+            this.factorDelta = factorDelta;
+            this.spiralPower = spiralPower;
+        }
 
         public void NextPosition(out int x, out int y)
         {
-            x = (int) (factor * angle * Math.Cos(angle));
-            y = (int) (factor * angle * Math.Sin(angle));
+            x = (int) (factor * Math.Pow(angle, spiralPower) * Math.Cos(angle));
+            y = (int) (factor * Math.Pow(angle, spiralPower) * Math.Sin(angle));
 
-            factor++;
+            factor += factorDelta;
             angle = (++angle) % 361 + 1;
         }
     }

@@ -17,7 +17,7 @@ namespace TagsCloudVisualization
         public CircularCloudLayouter(Point center)
         {
             this.center = center;
-            positioner = new ArchimedeanPositioner();
+            positioner = new ArchimedeanPositioner(1, 1); 
         }
 
         public Rectangle PutNextRectangle(Size rectangleSize)
