@@ -11,18 +11,17 @@ namespace TagsCloudVisualization
     {
         private readonly Point center;
 
-        public IList<Rectangle> Tags { get; private set; }
+        private readonly List<Rectangle> tags  = new List<Rectangle>();
 
         public CircularCloudLayouter(Point center)
         {
             this.center = center;
-            Tags = new List<Rectangle>();
         }
 
         public Rectangle PutNextRectangle(Size rectangleSize)
         {
             var rectangle = new Rectangle(new Point(center.X - rectangleSize.Width/2, center.Y - rectangleSize.Height/2), rectangleSize);
-            Tags.Add(rectangle);
+            tags.Add(rectangle);
             return rectangle;
         }
     }
