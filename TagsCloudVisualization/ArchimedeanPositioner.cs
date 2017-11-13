@@ -8,8 +8,8 @@ namespace TagsCloudVisualization
 {
     public class ArchimedeanPositioner : IPositioner
     {
-        private readonly double factorDelta = 1;
-        private readonly double spiralPower = 0.5;
+        private readonly double factorDelta;
+        private readonly double spiralPower;
 
         private double factor = 0;
         private int angle = 0;
