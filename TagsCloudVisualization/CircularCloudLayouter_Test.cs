@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,30 +34,6 @@ namespace TagsCloudVisualization
         }
 
         [Test]
-        public void PutNextRectangle_ShouldKeep_RoundShapeOfCloud()
-        {
-            // Проверку на "округлость" можно построить путём проверки расстояний от центров прямоугольников до центра облака.
-            // В данном случае возникает задача определения максимально возможного расстояния. Для начала можно делать это экспертным способом :)
-            
-            var cloudCentre = new Point(0, 0);
-            var tags = new List<Rectangle>();
-            var target = new CircularCloudLayouter(cloudCentre);
-
-            tags.Add(target.PutNextRectangle(new Size(4, 2)));
-            tags.Add(target.PutNextRectangle(new Size(3, 1)));
-            tags.Add(target.PutNextRectangle(new Size(2, 2)));
-            tags.Add(target.PutNextRectangle(new Size(4, 3)));
-            tags.Add(target.PutNextRectangle(new Size(4, 2)));
-            tags.Add(target.PutNextRectangle(new Size(4, 4)));
-            tags.Add(target.PutNextRectangle(new Size(2, 1)));
-            tags.Add(target.PutNextRectangle(new Size(5, 2)));
-
-            // предполагая раскладку указанных прямоугольников по спирали начиная с "9 часов", 
-            // имеем расстояние от центра облака до самого дальнего центра прямоугольника по Х - 4, по Y - 1, по прямой - 4.123
-            tags.Max(r => r.DistanceTo(cloudCentre)).Should().BeLessThan(4.2);
-        }
-
-        [Test]
         public void PutNextRectangle_ShouldNotInterfere_NewRectangleWithAnyExisting()
         {
             var cloudCentre = new Point(0, 0);
@@ -65,6 +43,49 @@ namespace TagsCloudVisualization
             var rectangle2 = target.PutNextRectangle(new Size(3, 1));
 
             rectangle2.IntersectsWith(rectangle1).Should().BeFalse();
+        }
+
+        [Test]
+        public void PutNextRectangle_ShouldKeep_RoundShapeOfCloud()
+        {
+            // Проверку на "округлость" можно построить путём проверки расстояний от центров прямоугольников до центра облака.
+            // В данном случае возникает задача определения максимально возможного расстояния. Для начала можно делать это экспертным способом :)
+            
+            var cloudCentre = new Point(300, 300);
+            var tags = new List<Rectangle>();
+            var target = new CircularCloudLayouter(cloudCentre);
+
+            tags.Add(target.PutNextRectangle(new Size(40, 10)));
+            tags.Add(target.PutNextRectangle(new Size(40, 10)));
+            tags.Add(target.PutNextRectangle(new Size(40, 10)));
+            tags.Add(target.PutNextRectangle(new Size(40, 10)));
+            tags.Add(target.PutNextRectangle(new Size(40, 10)));
+            tags.Add(target.PutNextRectangle(new Size(40, 10)));
+            tags.Add(target.PutNextRectangle(new Size(40, 10)));
+            tags.Add(target.PutNextRectangle(new Size(40, 10)));
+
+            DrawAndSaveCloud(tags);
+            
+            tags.Max(r => r.DistanceTo(cloudCentre)).Should().BeLessThan(161); //??
+        }
+
+        private void DrawAndSaveCloud(List<Rectangle> tags)
+        {
+            var width = 600;
+            var height = 600;
+
+            var bm = new Bitmap(width, height);
+            var g = Graphics.FromImage(bm);
+
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.FillRectangle(new SolidBrush(Color.White), new Rectangle { X = 0, Y = 0, Width = width, Height = height });
+
+            g.DrawRectangles(new Pen(Color.Blue), tags.ToArray());
+
+            Directory.CreateDirectory($"c:/temp");
+
+            g.Save(); 
+            bm.Save($"c:/temp/cloud_{DateTime.Now:yyMMdd_HHmmss}.png");
         }
     }
     
